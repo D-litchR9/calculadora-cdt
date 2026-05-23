@@ -21,7 +21,7 @@ public class UsuarioDAO {
 		System.out.println("No se ha encontrado al usuario");
 		return null;
 	}
-	public List<Usuario> listarTodosLosUsuarios() {
+	public List<Usuario> obtenerListaUsuarios() {
 		return historialUsuarios;
 	}
 	

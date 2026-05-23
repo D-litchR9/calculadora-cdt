@@ -1,4 +1,6 @@
 package service;
+import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import model.Inversion;
@@ -28,6 +30,10 @@ public class UsuarioService {
 	public void guardarNuevoUsuario(int i, String n) {
 		Usuario nuevoUsuario = new Usuario(i,n);
 		interfazDAO.agregarUsuarioToLista(nuevoUsuario);
+	}
+
+	public List<Usuario> listarTodosLosUsuarios() {
+		return interfazDAO.obtenerListaUsuarios();
 	}
 	
 	

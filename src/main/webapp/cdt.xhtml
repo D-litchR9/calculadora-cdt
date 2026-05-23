@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://jakarta.ee/jsf/html"
+      xmlns:f="http://jakarta.ee/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Gestión de CDT</title>
+    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/cdt.css" />
+</h:head>
+<h:body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Gestión de CDT</h1>
+            <p>Administra clientes y sus certificados de depósito</p>
+        </div>
+
+        <div class="content">
+            <!-- Panel izquierdo: lista de usuarios -->
+            <div class="user-panel">
+                <div class="panel-title">
+                    <span>👥 Clientes</span>
+                    <p:commandButton value="Nuevo Cliente" 
+                                     icon="pi pi-user-plus"
+                                     styleClass="btn-new"
+                                     onclick="PF('dlgUsuario').show();" />
+                </div>
+                <p:dataTable id="tablaUsuarios" 
+                             value="#{cdtController.listaUsuarios}" 
+                             var="u"
+                             selectionMode="single"
+                             selection="#{cdtController.usuarioSeleccionado}"
+                             rowKey="#{u.id}"
+                             emptyMessage="No hay clientes registrados"
+                             lazy="false">
+                    <p:column headerText="ID">#{u.id}</p:column>
+                    <p:column headerText="Nombre">#{u.nombre}</p:column>
+                    <p:column headerText="# CDTs">#{u.historialInversiones.size()}</p:column>
+                    <p:ajax event="rowSelect" 
+                            listener="#{cdtController.onUsuarioSeleccionado}"
+                            update=":detalleUsuario :tablaInversiones" />   <!-- Ruta absoluta -->
+                </p:dataTable>
+            </div>
+
+            <!-- Panel derecho: detalle y CDTs -->
+            <div class="details-panel">
+                <div class="panel-title">
+                    <span>📋 Detalle del Cliente</span>
+                    <p:commandButton value="Agregar CDT" 
+                                     icon="pi pi-plus-circle"
+                                     styleClass="btn-add"
+                                     disabled="#{empty cdtController.usuarioSeleccionado}"
+                                     onclick="PF('dlgInversion').show();" />
+                </div>
+
+                <!-- Componente con id único y absoluto -->
+                <p:outputPanel id="detalleUsuario" styleClass="user-detail">
+                    <p:panelGrid columns="2" styleClass="detail-grid" 
+                                 rendered="#{not empty cdtController.usuarioSeleccionado}">
+                        <strong>ID:</strong> #{cdtController.usuarioSeleccionado.id}
+                        <strong>Nombre:</strong> #{cdtController.usuarioSeleccionado.nombre}
+                        <strong>CDTs registrados:</strong> #{cdtController.usuarioSeleccionado.historialInversiones.size()}
+                    </p:panelGrid>
+                    <p:panelGrid styleClass="no-selection" 
+                                 rendered="#{empty cdtController.usuarioSeleccionado}">
+                        <i class="pi pi-info-circle"></i> Seleccione un cliente de la lista izquierda
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <div class="inversiones-title">📊 CDTs del Cliente</div>
+                <p:dataTable id="tablaInversiones" 
+                             value="#{cdtController.usuarioSeleccionado != null ? cdtController.usuarioSeleccionado.historialInversiones : null}" 
+                             var="inv"
+                             emptyMessage="Este cliente no tiene CDTs"
+                             lazy="false">
+                    <p:column headerText="ID">#{inv.id}</p:column>
+                    <p:column headerText="Nombre">#{inv.nombreInversion}</p:column>
+                    <p:column headerText="Monto">
+                        <h:outputText value="#{inv.montoInversion}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Plazo (días)">#{inv.plazoEnDias}</p:column>
+                    <p:column headerText="Tasa">
+                        <h:outputText value="#{inv.tasa}"><f:convertNumber pattern="#0.00" /></h:outputText>%
+                    </p:column>
+                    <p:column headerText="Ganancia Bruta">
+                        <h:outputText value="#{inv.gananciaBruta}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Ganancia Neta">
+                        <h:outputText value="#{inv.gananciaNeta}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diálogo: Nuevo Cliente -->
+    <p:dialog id="dlgUsuario" header="Nuevo Cliente" widgetVar="dlgUsuario" modal="true" width="450">
+        <h:form id="formUsuario">
+            <p:panelGrid columns="2" layout="grid" styleClass="dialog-grid">
+                <p:outputLabel value="ID:" for="idUsuario" />
+                <p:inputText id="idUsuario" value="#{cdtController.nuevoId}" required="true" />
+                
+                <p:outputLabel value="Nombre:" for="nombreUsuario" />
+                <p:inputText id="nombreUsuario" value="#{cdtController.nuevoNombre}" required="true" />
+            </p:panelGrid>
+            <p:commandButton value="Guardar" 
+                             action="#{cdtController.agregarNuevoUsuarioDesdeVista(cdtController.nuevoId, cdtController.nuevoNombre)}"
+                             oncomplete="if(args.validationFailed) return false; PF('dlgUsuario').hide();"
+                             update=":tablaUsuarios :growl" />   <!-- Absoluto -->
+            <p:commandButton value="Cancelar" onclick="PF('dlgUsuario').hide();" immediate="true" />
+        </h:form>
+    </p:dialog>
+
+    <!-- Diálogo: Agregar CDT -->
+    <p:dialog id="dlgInversion" header="Agregar CDT" widgetVar="dlgInversion" modal="true" width="550">
+        <h:form id="formInversion">
+            <p:panelGrid columns="2" layout="grid" styleClass="dialog-grid">
+                <p:outputLabel value="ID Inversión:" for="idInv" />
+                <p:inputText id="idInv" value="#{cdtController.nuevaInversionId}" required="true" />
+                
+                <p:outputLabel value="Nombre CDT:" for="nombreInv" />
+                <p:inputText id="nombreInv" value="#{cdtController.nuevaInversionNombre}" required="true" />
+                
+                <p:outputLabel value="Monto ($):" for="montoInv" />
+                <p:inputNumber id="montoInv" value="#{cdtController.nuevaInversionMonto}" 
+                               minValue="1" decimalPlaces="2" required="true" />
+                
+                <p:outputLabel value="Plazo (días):" for="plazoInv" />
+                <p:inputNumber id="plazoInv" value="#{cdtController.nuevaInversionPlazo}" 
+                               minValue="1" integerOnly="true" required="true" />
+                
+                <p:outputLabel value="Tasa anual (%):" for="tasaInv" />
+                <p:inputNumber id="tasaInv" value="#{cdtController.nuevaInversionTasa}" 
+                               minValue="0" maxValue="100" decimalPlaces="2" required="true" />
+            </p:panelGrid>
+            <p:commandButton value="Guardar CDT" 
+                             action="#{cdtController.agregarNuevaInversionDesdeVista(cdtController.nuevaInversionId, cdtController.nuevaInversionNombre, cdtController.nuevaInversionMonto, cdtController.nuevaInversionPlazo, cdtController.nuevaInversionTasa, cdtController.usuarioSeleccionado.id)}"
+                             oncomplete="if(args.validationFailed) return false; PF('dlgInversion').hide();"
+                             update=":tablaInversiones :detalleUsuario :growl" />   <!-- Absoluto -->
+            <p:commandButton value="Cancelar" onclick="PF('dlgInversion').hide();" immediate="true" />
+        </h:form>
+    </p:dialog>
+
+    <p:growl id="growl" showDetail="true" life="3000" />
+</h:body>
+</html>
