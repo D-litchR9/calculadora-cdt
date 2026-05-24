@@ -1,11 +1,73 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Insert title here</title>
-</head>
-<body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <title>Usuarios e Inversiones</title>
+</h:head>
+<h:body>
+    <h1>Listado de Usuarios con sus Inversiones</h1>
 
-</body>
+    <h:form>
+        <h:outputLabel value="Buscar por ID de usuario:" />
+        <h:inputText value="#{usuarioController.idBusqueda}" />
+        <h:commandButton value="Buscar">
+            <f:ajax execute="@form" render="tablaPanel" listener="#{usuarioController.buscar}" />
+        </h:commandButton>
+        <h:commandButton value="Mostrar todos" action="#{usuarioController.mostrarTodos}">
+            <f:ajax execute="@form" render="tablaPanel" />
+        </h:commandButton>
+    </h:form>
+
+    <br/>
+
+    <h:panelGroup id="tablaPanel">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Usuario</th>
+                    <th>Nombre Usuario</th>
+                    <th>ID Inversión</th>
+                    <th>Nombre Inversión</th>
+                    <th>Monto</th>
+                    <th>Plazo (días)</th>
+                    <th>Tasa (%)</th>
+                    <th>Ganancia Bruta</th>
+                    <th>Ganancia Neta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ui:repeat value="#{usuarioController.usuariosFiltrados}" var="usuario">
+                    <ui:repeat value="#{usuario.historialInversiones}" var="inv">
+                        <tr>
+                            <td>#{usuario.id}</td>
+                            <td>#{usuario.nombre}</td>
+                            <td>#{inv.id}</td>
+                            <td>#{inv.nombreInversion}</td>
+                            <td>#{inv.montoInversion}</td>
+                            <td>#{inv.plazoEnDias}</td>
+                            <td>#{inv.tasa}</td>
+                            <td>#{inv.gananciaBruta}</td>
+                            <td>#{inv.gananciaNeta}</td>
+                        </tr>
+                    </ui:repeat>
+                    <ui:repeat value="#{usuario.historialInversiones}" var="inv" rendered="#{empty usuario.historialInversiones}">
+                        <tr>
+                            <td>#{usuario.id}</td>
+                            <td>#{usuario.nombre}</td>
+                            <td colspan="7">Sin inversiones registradas</td>
+                        </tr>
+                    </ui:repeat>
+                </ui:repeat>
+            </tbody>
+        </table>
+        <h:panelGroup rendered="#{empty usuarioController.usuariosFiltrados}">
+            <p>No hay usuarios con ese ID.</p>
+        </h:panelGroup>
+    </h:panelGroup>
+
+    <br/>
+    <h:link outcome="index" value="Volver al inicio" />
+</h:body>
 </html>

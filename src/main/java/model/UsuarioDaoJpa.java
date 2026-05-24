@@ -23,8 +23,8 @@ public class UsuarioDaoJpa {
     }
 
     public List<Usuario> obtenerTodos() {
-        TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u", Usuario.class);
-        return query.getResultList();
+        return em.createQuery("SELECT DISTINCT u FROM Usuario u LEFT JOIN FETCH u.historialInversiones", Usuario.class)
+                 .getResultList();
     }
 
     @Transactional
