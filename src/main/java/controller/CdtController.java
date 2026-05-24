@@ -1,6 +1,8 @@
 package controller;
 
 import service.UsuarioService;
+import model.Inversion;
+import model.Usuario;
 import java.io.Serializable;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -9,7 +11,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 
 @Named
-@RequestScoped   // No necesita mantener estado entre peticiones, solo para el formulario de inversión
+@RequestScoped
 public class CdtController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -18,7 +20,7 @@ public class CdtController implements Serializable {
     private UsuarioService usuarioService;
 
     @Inject
-    private UsuarioController usuarioController; // Para saber a qué usuario asociar la inversión
+    private UsuarioController usuarioController;
 
     // Campos del formulario de nueva inversión (CDT)
     private int nuevaInversionId;
@@ -27,7 +29,11 @@ public class CdtController implements Serializable {
     private int nuevaInversionPlazo;
     private double nuevaInversionTasa;
 
-    // Getters y Setters
+    // Variables para mostrar resultados del cálculo (solo para la vista)
+    private Double gananciaBrutaCalculada;
+    private Double gananciaNetaCalculada;
+
+    // Getters y Setters (originales)
     public int getNuevaInversionId() {
         return nuevaInversionId;
     }
@@ -68,11 +74,50 @@ public class CdtController implements Serializable {
         this.nuevaInversionTasa = nuevaInversionTasa;
     }
 
-    // Acción para agregar la inversión al usuario seleccionado actualmente
+    // Getters y Setters para los resultados del cálculo
+    public Double getGananciaBrutaCalculada() {
+        return gananciaBrutaCalculada;
+    }
+
+    public void setGananciaBrutaCalculada(Double gananciaBrutaCalculada) {
+        this.gananciaBrutaCalculada = gananciaBrutaCalculada;
+    }
+
+    public Double getGananciaNetaCalculada() {
+        return gananciaNetaCalculada;
+    }
+
+    public void setGananciaNetaCalculada(Double gananciaNetaCalculada) {
+        this.gananciaNetaCalculada = gananciaNetaCalculada;
+    }
+
+    // Método para calcular ganancias usando la clase Inversion (sin guardar)
+    public void calcularGanancias() {
+        // Validar que los campos tengan valores razonables
+        if (nuevaInversionNombre == null || nuevaInversionNombre.trim().isEmpty() ||
+            nuevaInversionMonto <= 0 || nuevaInversionPlazo <= 0 || nuevaInversionTasa <= 0) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", 
+                    "Complete todos los campos con valores válidos antes de calcular"));
+            return;
+        }
+
+        // Crear objeto Inversion temporal (ID provisional 0, no se guarda)
+        Inversion invTemp = new Inversion(0,
+                                          this.nuevaInversionNombre,
+                                          this.nuevaInversionMonto,
+                                          this.nuevaInversionPlazo,
+                                          this.nuevaInversionTasa);
+        this.gananciaBrutaCalculada = invTemp.getGananciaBruta();
+        this.gananciaNetaCalculada = invTemp.getGananciaNeta();
+    }
+
+    // Método original: agregar inversión al usuario seleccionado (void)
     public void agregarNuevaInversion() {
         if (usuarioController.getUsuarioSeleccionado() == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar un usuario primero"));
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", 
+                    "Debe seleccionar un usuario primero"));
             return;
         }
 
@@ -87,20 +132,32 @@ public class CdtController implements Serializable {
                 idUsuario
             );
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Inversión agregada al usuario"));
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
+                    "Inversión agregada al usuario"));
             // Limpiar el formulario
             nuevaInversionId = 0;
             nuevaInversionNombre = null;
             nuevaInversionMonto = 0.0;
             nuevaInversionPlazo = 0;
             nuevaInversionTasa = 0.0;
+            // Opcional: limpiar también los resultados mostrados
+            gananciaBrutaCalculada = null;
+            gananciaNetaCalculada = null;
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar la inversión"));
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    "No se pudo guardar la inversión: " + e.getMessage()));
         }
     }
 
-    // Opcional: método para volver a la lista de usuarios
+    // Nuevo método: guardar la inversión y redirigir a tablaUsuarios.xhtml
+    public String guardarYRedirigir() {
+        agregarNuevaInversion();  // Reutiliza la lógica existente (mensajes incluidos)
+        // Redirige a la vista de tabla de usuarios (nombre exacto)
+        return "tablaUsuarios.xhtml?faces-redirect=true";
+    }
+
+    // Método para volver a la lista de usuarios (original)
     public String volverALista() {
         return "usuarios.xhtml?faces-redirect=true";
     }

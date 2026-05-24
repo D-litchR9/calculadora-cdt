@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+    <title>Registro de inversión CDT</title>
+</h:head>
+<h:body>
+    <h1>Nueva inversión CDT</h1>
+    <h:form>
+        <!-- 4 campos requeridos (ID se genera automáticamente, no se muestra) -->
+        <div>
+            <h:outputLabel value="Nombre de la inversión:" />
+            <h:inputText value="#{cdtController.nuevaInversionNombre}" required="true" />
+        </div>
+        <div>
+            <h:outputLabel value="Monto a invertir:" />
+            <h:inputText value="#{cdtController.nuevaInversionMonto}" required="true" />
+        </div>
+        <div>
+            <h:outputLabel value="Plazo (días):" />
+            <h:inputText value="#{cdtController.nuevaInversionPlazo}" required="true" />
+        </div>
+        <div>
+            <h:outputLabel value="Tasa anual (%):" />
+            <h:inputText value="#{cdtController.nuevaInversionTasa}" required="true" />
+        </div>
+
+        <!-- Botones -->
+        <div>
+            <h:commandButton value="Calcular ganancias" action="#{cdtController.calcularGanancias}" />
+            <h:commandButton value="Guardar inversión y enviar a tablaUsuarios" 
+                             action="#{cdtController.guardarYRedirigir}" />
+        </div>
+    </h:form>
+
+    <!-- Panel para mostrar resultados (solo si ya se calculó) -->
+    <h:panelGroup rendered="#{cdtController.gananciaBrutaCalculada != null}">
+        <h2>Resultado del cálculo</h2>
+        <div>Ganancia bruta: #{cdtController.gananciaBrutaCalculada}</div>
+        <div>Ganancia neta (después de 4%): #{cdtController.gananciaNetaCalculada}</div>
+    </h:panelGroup>
+
+    <!-- Mensajes globales (éxito/error) -->
+    <h:messages />
+</h:body>
+</html>
