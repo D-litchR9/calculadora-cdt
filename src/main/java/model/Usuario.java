@@ -8,6 +8,7 @@ import java.util.List;
 public class Usuario {
 	private int id;
 	private String nombre;
+	private int totalInversiones;
 	private List<Inversion> historialInversiones= new ArrayList<Inversion>();
 	
 	//Método principal
@@ -22,7 +23,7 @@ public class Usuario {
 		this.id = id;
 		this.nombre = nombre;
 	}
-
+	
 
 	//Getters y Setters
 	public int getId() {return id;}
@@ -30,6 +31,9 @@ public class Usuario {
 	
 	public String getNombre() {return nombre;}
 	public void setNombre(String nombre) {this.nombre = nombre;}
+	
+	public int getTotalnversiones() {return totalInversiones;}
+	public void setTotalInversiones(int totalInversiones) {this.totalInversiones= totalInversiones;}
 	
 	public List<Inversion> getHistorialInversiones() {		return historialInversiones;}
 	public void setHistorialInversiones(List<Inversion> historialInversiones) {this.historialInversiones = historialInversiones;}

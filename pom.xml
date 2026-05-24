@@ -20,7 +20,7 @@
         <!-- Versiones Jakarta EE 10 -->
         <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
         <jakarta-faces.version>4.0.5</jakarta-faces.version>   <!-- Mojarra -->
-        <primefaces.version>13.0.5</primefaces.version>
+        <primefaces.version>15.0.0</primefaces.version>
         <weld.version>5.1.2.Final</weld.version>               <!-- CDI -->
         <jakarta-el.version>4.0.2</jakarta-el.version>         <!-- Expression Language -->
         <jakarta-annotation-api.version>2.1.1</jakarta-annotation-api.version>

@@ -24,6 +24,9 @@ public class UsuarioService {
 		if(usuarioExistente != null) {
 			nuevaInversion = new Inversion(i,n,m,p,t);
 			usuarioExistente.agregarInversionUsuario(nuevaInversion);
+			int totalInv = usuarioExistente.getHistorialInversiones().size();
+			totalInv++;
+			usuarioExistente.setTotalInversiones(totalInv);
 		}
 	}
 	
