@@ -17,66 +17,65 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Versiones Jakarta EE 10 -->
-        <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
-        <jakarta-faces.version>4.0.5</jakarta-faces.version>   <!-- Mojarra -->
-        <primefaces.version>15.0.0</primefaces.version>
-        <weld.version>5.1.2.Final</weld.version>               <!-- CDI -->
-        <jakarta-el.version>4.0.2</jakarta-el.version>         <!-- Expression Language -->
-        <jakarta-annotation-api.version>2.1.1</jakarta-annotation-api.version>
+        <!-- Versiones de dependencias corregidas -->
+        
+        <primefaces.version>14.0.0</primefaces.version>
+        <weld.version>5.1.2.Final</weld.version>
+        <hibernate.version>6.5.2.Final</hibernate.version>
+        <mysql.version>8.4.0</mysql.version>
     </properties>
 
     <dependencies>
-        <!-- Servlet API (proporcionado por Tomcat) -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>${jakarta-servlet-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        
 
-        <!-- Jakarta Faces (Mojarra) - implementación JSF -->
+        <!-- Implementación de JSF (Mojarra) requerida para Tomcat -->
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.faces</artifactId>
-            <version>${jakarta-faces.version}</version>
+            <version>4.0.5</version>
         </dependency>
 
-        <!-- PrimeFaces - componentes JSF -->
+        <!-- PrimeFaces para Jakarta EE -->
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>${primefaces.version}</version>
-            <classifier>jakarta</classifier> <!-- para namespace Jakarta -->
+            <classifier>jakarta</classifier>
         </dependency>
 
-        <!-- Weld - implementación CDI para Tomcat -->
+        <!-- Weld - implementación de CDI necesaria en Tomcat estándar -->
         <dependency>
             <groupId>org.jboss.weld.servlet</groupId>
             <artifactId>weld-servlet-core</artifactId>
             <version>${weld.version}</version>
         </dependency>
 
-        <!-- Expression Language (necesario para JSF en Tomcat) -->
+        <!-- Hibernate como proveedor de JPA (ORM) -->
         <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.el</artifactId>
-            <version>${jakarta-el.version}</version>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
-        <!-- Jakarta Annotations (requerido por CDI y JSF) -->
+        <!-- Driver de Base de Datos MySQL -->
         <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta-annotation-api.version}</version>
-            <scope>provided</scope> <!-- Tomcat lo incluye -->
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
+        
+        <dependency>
+		    <groupId>jakarta.servlet</groupId>
+		    <artifactId>jakarta.servlet-api</artifactId>
+		    <version>6.0.0</version>
+		    <scope>provided</scope>
+		</dependency>
     </dependencies>
 
     <build>
-        <finalName>Calculadora CDT</finalName>
+        <finalName>Calculadora-CDT</finalName>
         <plugins>
-            <!-- Plugin compilador para Java 21 -->
+            <!-- Plugin de compilación -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -86,7 +85,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin WAR para evitar fallo si no hay web.xml -->
+            <!-- Plugin de empaquetado WAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
