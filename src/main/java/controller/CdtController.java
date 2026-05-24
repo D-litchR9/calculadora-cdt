@@ -79,7 +79,6 @@ public class CdtController implements Serializable {
         int idUsuario = usuarioController.getUsuarioSeleccionado().getId();
         try {
             usuarioService.guardarInversionToUsuario(
-                nuevaInversionId,
                 nuevaInversionNombre,
                 nuevaInversionMonto,
                 nuevaInversionPlazo,

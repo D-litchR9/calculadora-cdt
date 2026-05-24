@@ -6,6 +6,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+//import model.Usuario;
 
 public class EntityManagerProducer {
 
@@ -21,4 +22,6 @@ public class EntityManagerProducer {
     public void closeEntityManager(@Disposes EntityManager em) {
         if (em.isOpen()) em.close();
     }
+
+	
 }

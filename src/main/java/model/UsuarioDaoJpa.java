@@ -6,7 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import config.EntityManagerProducer;
+
 @ApplicationScoped
 public class UsuarioDaoJpa {
 	
