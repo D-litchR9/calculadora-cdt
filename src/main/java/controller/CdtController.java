@@ -1,8 +1,7 @@
 package controller;
 
 import service.UsuarioService;
-import model.Inversion;
-import model.Usuario;
+
 import java.io.Serializable;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -92,7 +91,7 @@ public class CdtController implements Serializable {
     }
 
     // Método para calcular ganancias usando la clase Inversion (sin guardar)
-    public void calcularGanancias() {
+    public void calcularGananciasDesdeVista() {
         // Validar que los campos tengan valores razonables
         if (nuevaInversionNombre == null || nuevaInversionNombre.trim().isEmpty() ||
             nuevaInversionMonto <= 0 || nuevaInversionPlazo <= 0 || nuevaInversionTasa <= 0) {
@@ -101,19 +100,10 @@ public class CdtController implements Serializable {
                     "Complete todos los campos con valores válidos antes de calcular"));
             return;
         }
-
-        // Crear objeto Inversion temporal (ID provisional 0, no se guarda)
-        Inversion invTemp = new Inversion(0,
-                                          this.nuevaInversionNombre,
-                                          this.nuevaInversionMonto,
-                                          this.nuevaInversionPlazo,
-                                          this.nuevaInversionTasa);
-        this.gananciaBrutaCalculada = invTemp.getGananciaBruta();
-        this.gananciaNetaCalculada = invTemp.getGananciaNeta();
     }
 
     // Método original: agregar inversión al usuario seleccionado (void)
-    public void agregarNuevaInversion() {
+    public void calcularGanancias() {
         if (usuarioController.getUsuarioSeleccionado() == null) {
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", 
@@ -151,7 +141,7 @@ public class CdtController implements Serializable {
 
     // Nuevo método: guardar la inversión y redirigir a tablaUsuarios.xhtml
     public String guardarYRedirigir() {
-        agregarNuevaInversion();  // Reutiliza la lógica existente (mensajes incluidos)
+    	calcularGanancias();  // Reutiliza la lógica existente (mensajes incluidos)
         // Redirige a la vista de tabla de usuarios (nombre exacto)
         return "tablaUsuarios.xhtml?faces-redirect=true";
     }
