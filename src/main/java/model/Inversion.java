@@ -9,6 +9,8 @@ public class Inversion {
     private double tasa;
     private double gananciaBruta;
     private double gananciaNeta;
+    
+    public Inversion() {}
 
     public Inversion(int id, String nombreIngresado, double montoIngresado,
                      int plazoIngresado, double tasaIngresada) {
