@@ -27,6 +27,8 @@ public class Inversion implements Serializable {
 
     @Column(name = "ganancia_neta")
     private double gananciaNeta;
+    
+    public Inversion() {}
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

@@ -1,119 +1,107 @@
 package controller;
 
 import service.UsuarioService;
-import model.Usuario;
 import java.io.Serializable;
-import java.util.List;
-
-//import org.primefaces.PrimeFaces;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-//import jakarta.faces.view.ViewScoped;
 
 @Named
-@SessionScoped
+@RequestScoped   // No necesita mantener estado entre peticiones, solo para el formulario de inversión
 public class CdtController implements Serializable {
 
-    private static final long serialVersionUID = 1428259387931014374L;
+    private static final long serialVersionUID = 1L;
 
     @Inject
-    UsuarioService objService;
+    private UsuarioService usuarioService;
 
-    // Variables de usuario
-    private int nuevoId;
-    private String nuevoNombre;
-    private int idUsuarioSeleccionado;
-    
-    private Usuario usuarioActual;
-    private Usuario usuarioSeleccionado; // Usuario actual en la vista 
-    
+    @Inject
+    private UsuarioController usuarioController; // Para saber a qué usuario asociar la inversión
 
-    // Variables para nueva inversión
+    // Campos del formulario de nueva inversión (CDT)
     private int nuevaInversionId;
     private String nuevaInversionNombre;
     private double nuevaInversionMonto;
     private int nuevaInversionPlazo;
     private double nuevaInversionTasa;
 
-   
-    
-    // Listar usuarios
-    public List<Usuario> getListaUsuarios() {
-        return objService.listarTodosLosUsuarios();
+    // Getters y Setters
+    public int getNuevaInversionId() {
+        return nuevaInversionId;
     }
 
-    
-    // Cargar usuario por ID (cuando se accede directamente con parámetro) pendiente por mirar
-    public void cargarUsuarioPorId() {
-        if (idUsuarioSeleccionado > 0) {
-            usuarioActual = objService.listarTodosLosUsuarios().stream()
-                .filter(u -> u.getId() == idUsuarioSeleccionado)
-                .findFirst()
-                .orElse(null);
-            if (usuarioActual == null) {
-                FacesContext.getCurrentInstance().addMessage(null, 
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Usuario no encontrado"));
-            }
+    public void setNuevaInversionId(int nuevaInversionId) {
+        this.nuevaInversionId = nuevaInversionId;
+    }
+
+    public String getNuevaInversionNombre() {
+        return nuevaInversionNombre;
+    }
+
+    public void setNuevaInversionNombre(String nuevaInversionNombre) {
+        this.nuevaInversionNombre = nuevaInversionNombre;
+    }
+
+    public double getNuevaInversionMonto() {
+        return nuevaInversionMonto;
+    }
+
+    public void setNuevaInversionMonto(double nuevaInversionMonto) {
+        this.nuevaInversionMonto = nuevaInversionMonto;
+    }
+
+    public int getNuevaInversionPlazo() {
+        return nuevaInversionPlazo;
+    }
+
+    public void setNuevaInversionPlazo(int nuevaInversionPlazo) {
+        this.nuevaInversionPlazo = nuevaInversionPlazo;
+    }
+
+    public double getNuevaInversionTasa() {
+        return nuevaInversionTasa;
+    }
+
+    public void setNuevaInversionTasa(double nuevaInversionTasa) {
+        this.nuevaInversionTasa = nuevaInversionTasa;
+    }
+
+    // Acción para agregar la inversión al usuario seleccionado actualmente
+    public void agregarNuevaInversion() {
+        if (usuarioController.getUsuarioSeleccionado() == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar un usuario primero"));
+            return;
+        }
+
+        int idUsuario = usuarioController.getUsuarioSeleccionado().getId();
+        try {
+            usuarioService.guardarInversionToUsuario(
+                nuevaInversionId,
+                nuevaInversionNombre,
+                nuevaInversionMonto,
+                nuevaInversionPlazo,
+                nuevaInversionTasa,
+                idUsuario
+            );
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Inversión agregada al usuario"));
+            // Limpiar el formulario
+            nuevaInversionId = 0;
+            nuevaInversionNombre = null;
+            nuevaInversionMonto = 0.0;
+            nuevaInversionPlazo = 0;
+            nuevaInversionTasa = 0.0;
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar la inversión"));
         }
     }
-    
-    // Volver a la lista de usuarios
+
+    // Opcional: método para volver a la lista de usuarios
     public String volverALista() {
         return "usuarios.xhtml?faces-redirect=true";
     }
-
-    //Agregar nuevo usuario 
-    public void agregarNuevoUsuario() {
-        objService.guardarNuevoUsuario(nuevoId, nuevoNombre);
-    }
-
-    // Agregar inversión al usuario actual 
-    public void agregarNuevaInversionDesdeVista() {
-    	//Ya se sabe el usuario seleccionado por el setter llamado en el dataTable;
-        objService.guardarInversionToUsuario(
-            nuevaInversionId,
-            nuevaInversionNombre,
-            nuevaInversionMonto,
-            nuevaInversionPlazo,
-            nuevaInversionTasa,
-            usuarioSeleccionado.getId()
-        );
-    }
-    
-   
-    
-    // Getters y Setters de nueva Inversión
-    public int getNuevoId() { return nuevoId; }
-    public void setNuevoId(int nuevoId) { this.nuevoId = nuevoId; }
-
-    public String getNuevoNombre() { return nuevoNombre; }
-    public void setNuevoNombre(String nuevoNombre) { this.nuevoNombre = nuevoNombre; }
-
-    public int getNuevaInversionId() { return nuevaInversionId; }
-    public void setNuevaInversionId(int nuevaInversionId) { this.nuevaInversionId = nuevaInversionId; }
-
-    public String getNuevaInversionNombre() { return nuevaInversionNombre; }
-    public void setNuevaInversionNombre(String n) { this.nuevaInversionNombre = n; }
-
-    public double getNuevaInversionMonto() { return nuevaInversionMonto; }
-    public void setNuevaInversionMonto(double m) { this.nuevaInversionMonto = m; }
-
-    public int getNuevaInversionPlazo() { return nuevaInversionPlazo; }
-    public void setNuevaInversionPlazo(int p) { this.nuevaInversionPlazo = p; }
-
-    public double getNuevaInversionTasa() { return nuevaInversionTasa; }
-    public void setNuevaInversionTasa(double t) { this.nuevaInversionTasa = t; }
-    
-    //Getters y setters de Usuario 
-    public Usuario getUsuarioActual() { return usuarioActual; }
-    public void setUsuarioActual(Usuario usuarioActual) { this.usuarioActual = usuarioActual; }
-    
-    public int getIdUsuarioSeleccionado() { return idUsuarioSeleccionado; }
-    public void setIdUsuarioSeleccionado(int idUsuarioSeleccionado) { this.idUsuarioSeleccionado = idUsuarioSeleccionado;}
-    
-    public Usuario getUsuarioSeleccionado() { return usuarioSeleccionado; }
-    public void setUsuarioSeleccionado(Usuario u) { this.usuarioSeleccionado = u; }
-    }
+}
