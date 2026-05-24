@@ -1,38 +1,60 @@
 package model;
 
-public class Inversion {
+import jakarta.persistence.*;
+import java.io.Serializable;
 
+@Entity
+@Table(name = "inversion")
+public class Inversion implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "nombre_inversion", nullable = false)
     private String nombreInversion;
+
+    @Column(name = "monto_inversion", nullable = false)
     private double montoInversion;
+
+    @Column(name = "plazo_en_dias", nullable = false)
     private int plazoEnDias;
+
     private double tasa;
+
+    @Column(name = "ganancia_bruta")
     private double gananciaBruta;
+
+    @Column(name = "ganancia_neta")
     private double gananciaNeta;
 
-    public Inversion(int id, String nombreIngresado, double montoIngresado,
-                     int plazoIngresado, double tasaIngresada) {
-        this.id = id;
-        this.nombreInversion = nombreIngresado;
-        this.montoInversion = montoIngresado;
-        this.plazoEnDias = plazoIngresado;
-        this.tasa = tasaIngresada;
-        // Calcular al construir para que los getters devuelvan valores correctos
-        this.gananciaBruta = calcularGananciaBruta();
-        this.gananciaNeta  = calcularGananciaNeta();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    public Inversion() {}  // Constructor vacío JPA
+
+    public Inversion(String nombreInversion, double montoInversion, int plazoEnDias, double tasa) {
+        this.nombreInversion = nombreInversion;
+        this.montoInversion = montoInversion;
+        this.plazoEnDias = plazoEnDias;
+        this.tasa = tasa;
+        calcularGanancias();
     }
 
-    // tasa viene como porcentaje (ej: 5.0 = 5%), se divide entre 100
-    public double calcularGananciaBruta() {
-        return gananciaBruta = this.montoInversion * (this.tasa / 100.0) * (this.plazoEnDias / 365.0);
+    private void calcularGanancias() {
+        this.gananciaBruta = this.montoInversion * (this.tasa / 100.0) * (this.plazoEnDias / 365.0);
+        this.gananciaNeta = this.gananciaBruta - (this.gananciaBruta * 0.04);
     }
 
-    public double calcularGananciaNeta() {
-        double gb = calcularGananciaBruta();
-        this.gananciaNeta = gb - (gb * 0.04);
-        return this.gananciaNeta;
+    // Método que se debe llamar antes de persistir o actualizar
+    @PrePersist
+    @PreUpdate
+    public void actualizarGanancias() {
+        calcularGanancias();
     }
 
+    // Getters y setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -53,4 +75,7 @@ public class Inversion {
 
     public double getGananciaNeta() { return gananciaNeta; }
     public void setGananciaNeta(double gananciaNeta) { this.gananciaNeta = gananciaNeta; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 }
