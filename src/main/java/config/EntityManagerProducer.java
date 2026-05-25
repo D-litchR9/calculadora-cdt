@@ -1,27 +1,32 @@
-package config;   // o util, o cdi
+package config;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Disposes;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-//import model.Usuario;
 
+@ApplicationScoped
 public class EntityManagerProducer {
 
-    private static final EntityManagerFactory emf =
-        Persistence.createEntityManagerFactory("cdtPU");
+    private EntityManagerFactory emf;
+
+    @PostConstruct
+    public void init() {
+        emf = Persistence.createEntityManagerFactory("cdtPU");  // debe coincidir con persistence.xml
+    }
 
     @Produces
-    @RequestScoped
-    public EntityManager createEntityManager() {
-        return emf.createEntityManager();
+    @ApplicationScoped
+    public EntityManagerFactory getEntityManagerFactory() {
+        return emf;
     }
 
-    public void closeEntityManager(@Disposes EntityManager em) {
-        if (em.isOpen()) em.close();
+    @PreDestroy
+    public void close() {
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+        }
     }
-
-	
 }

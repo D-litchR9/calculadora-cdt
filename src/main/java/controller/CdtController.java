@@ -108,7 +108,7 @@ public class CdtController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", 
                     "Debe seleccionar un usuario primero"));
-            return;
+            
         }
 
         int idUsuario = usuarioController.getUsuarioSeleccionado().getId();
