@@ -4,8 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;   // (ya no se usa, puedes quitarlo)
+
 import java.util.List;
 
 @ApplicationScoped

@@ -9,6 +9,10 @@
     <h:form>
         <!-- 4 campos requeridos (ID se genera automáticamente, no se muestra) -->
         <div>
+            <h:outputLabel value="identificador del usuario de la nueva inversión:" />
+            <h:inputText value="#{cdtController.identificadorUsuarioSeleccionado}" required="true" />
+        </div>
+        <div>
             <h:outputLabel value="Nombre de la inversión:" />
             <h:inputText value="#{cdtController.nuevaInversionNombre}" required="true" />
         </div>
@@ -27,8 +31,8 @@
 
         <!-- Botones -->
         <div>
-            <h:commandButton value="Calcular ganancias" action="#{cdtController.calcularGanancias}" />
-            <h:commandButton value="Guardar inversión y enviar a tablaUsuarios" 
+            <h:commandButton value="Registar Inversión y calcular Valores" action="#{cdtController.registrarInversionDesdeVista}" />
+            <h:commandButton value="Tabla Usuarios" 
                              action="#{cdtController.guardarYRedirigir}" />
         </div>
     </h:form>

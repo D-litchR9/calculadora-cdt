@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import model.UsuarioDaoJpa;
 
 
 import jakarta.enterprise.context.SessionScoped;
@@ -25,6 +25,7 @@ public class UsuarioController implements Serializable {
     private UsuarioService usuarioService;
 
     private int nuevoId;
+    
     private String nuevoNombre;
     private Usuario usuarioSeleccionado;
 
@@ -35,7 +36,8 @@ public class UsuarioController implements Serializable {
     // Getters / Setters
     public int getNuevoId() { return nuevoId; }
     public void setNuevoId(int nuevoId) { this.nuevoId = nuevoId; }
-
+    
+    
     public String getNuevoNombre() { return nuevoNombre; }
     public void setNuevoNombre(String nuevoNombre) { this.nuevoNombre = nuevoNombre; }
 
@@ -92,25 +94,4 @@ public class UsuarioController implements Serializable {
         buscar();
     }
 
-    // Método ingresar (comentado por ahora, pero sin errores de llaves)
-    /*
-    public String ingresar() {
-        if (nuevoId <= 0) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe ingresar un ID numérico válido"));
-            return null;
-        }
-        Usuario u = usuarioService.obtenerUsuario(nuevoId);
-        if (u != null) {
-            usuarioSeleccionado = u;
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenido", "Usuario " + u.getNombre() + " encontrado"));
-            return null;
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No existe un usuario con ID " + nuevoId));
-            return null;
-        }
-    }
-    */
 }

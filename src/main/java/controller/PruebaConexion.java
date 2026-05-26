@@ -21,7 +21,7 @@ public class PruebaConexion {
             String versionPostgres = (String) em.createNativeQuery("SELECT version()").getSingleResult();
             
             System.out.println("=========================================");
-            System.out.println("¡CONEXIÓN EXITOSA CON POSTGRESQL!");
+            System.out.println("Conexión correcta con postgreSQL");
             System.out.println("Versión del servidor: " + versionPostgres);
             System.out.println("=========================================");
 

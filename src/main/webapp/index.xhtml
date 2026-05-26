@@ -8,17 +8,14 @@
 <h:body>
     <h1>Registro de usuario</h1>
     <h:form>
-        <div>
-            <h:outputLabel for="id" value="ID numérico:" />
-            <h:inputText id="id" value="#{usuarioController.nuevoId}" required="false" />
-        </div>
+        
         <div>
             <h:outputLabel for="nombre" value="Nombre:" />
             <h:inputText id="nombre" value="#{usuarioController.nuevoNombre}" required="true" />
         </div>
         <div>
         
-        <!-- La funcion queda para modificar para que haga la call a la bd  -->
+        <!-- FUNCIONAL: requiere tener todo lo de BD configurado. REVISAR ARCHIVO persistence.xml-->
             <h:commandButton value="Agregar usuario" action="#{usuarioController.agregarNuevoUsuario}" />
             
             
@@ -28,6 +25,6 @@
         </div>
     </h:form>
     <!-- Aquí puedes agregar un <h:messages /> para ver los mensajes de éxito/error -->
-    <h:messages />
+   
 </h:body>
 </html>

@@ -26,6 +26,7 @@ public class Usuario {
     public Usuario(String nombre) {
         this.nombre = nombre;
     }
+   
 
     // Método de conveniencia para mantener ambos lados de la relación
     public void agregarInversionUsuario(Inversion inversion) {
