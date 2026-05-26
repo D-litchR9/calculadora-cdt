@@ -133,6 +133,8 @@ public class CdtController implements Serializable {
 	            limpiarFormulario();
 	            
 	        } catch (Exception e) {
+	            System.out.println("ERROR: no se ha podido agregar la inversión a el usuario:"+ identificadorUsuarioSeleccionado);
+	            e.printStackTrace();  // Esto imprime el error completo en la consola de Tomcat
 	            FacesContext.getCurrentInstance().addMessage(null,
 	                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
 	                    "No se pudo guardar la inversión: " + e.getMessage()));
