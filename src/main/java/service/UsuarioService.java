@@ -18,27 +18,27 @@ public class UsuarioService {
 	
 	@Inject
     private UsuarioDaoJpa usuarioDao;
-	@PersistenceContext
-	 private EntityManager em;
+	@Inject
+	private EntityManager em;
 	
 	@Transactional
-	 public void guardarInversionToUsuario(String nombreInversion, double monto, int plazo, double tasa, int idUsuario) {
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Usuario usuario = em.find(Usuario.class, idUsuario); // En lugar de usuarioDao.obtenerUsuario
-            if (usuario != null) {
-                Inversion nuevaInversion = new Inversion(nombreInversion, monto, plazo, tasa);
-                usuario.agregarInversionUsuario(nuevaInversion);
-                em.persist(nuevaInversion); // Si la relación no persiste en cascada, hacer persist
-                // em.merge(usuario); // No necesario si usuario está gestionado
-            }
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw new RuntimeException("Error al guardar inversión", e);
-        }
-    }
+	public void guardarInversionToUsuario(String nombreInversion, double monto, int plazo, double tasa, int idUsuario) {
+	    EntityTransaction tx = em.getTransaction();
+	    try {
+	        tx.begin();
+	        Usuario usuario = em.find(Usuario.class, idUsuario);
+	        if (usuario != null) {
+	            Inversion nuevaInversion = new Inversion(nombreInversion, monto, plazo, tasa);
+	            usuario.agregarInversionUsuario(nuevaInversion);
+	            em.persist(nuevaInversion);
+	        }
+	        tx.commit();
+	    } catch (Exception e) {
+	        if (tx.isActive()) tx.rollback();
+	        throw new RuntimeException("Error al guardar inversión", e);
+	    }
+	}
+	
 	@Transactional
     public void guardarNuevoUsuario(String nombre) {
         Usuario nuevo = new Usuario(nombre);
